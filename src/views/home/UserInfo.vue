@@ -1,5 +1,24 @@
 <template>
   <div class="UserInfo">
+    <!-- 用户编辑 -->
+    <el-dialog
+      :title="thisUserInfo.tit"
+      :visible.sync="dialogFormVisibleUserInfo"
+    >
+      <el-form :model="thisUserInfo">
+        <el-form-item label="姓名">
+          <el-input v-model="thisUserInfo.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证">
+          <el-input v-model="thisUserInfo.uid" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleUserInfo = false">取 消</el-button>
+        <el-button type="primary" @click="updateUser()">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <div class="style1"></div>
     <div class="style2"></div>
     <div class="page1">
@@ -10,14 +29,20 @@
         content="添加用户"
         placement="bottom"
       >
-        <div class="add">
+        <div class="add" @click="editAddUser()">
           <i class="el-icon-plus"></i>
         </div>
       </el-tooltip>
 
       <div class="text">
-        <input type="text" class="inp" placeholder="请输入搜索内容" />
-        <div class="btn">
+        <input
+          type="text"
+          class="inp"
+          placeholder="请输入搜索内容"
+          v-model="searchText"
+          @keyup.enter="searchUser()"
+        />
+        <div class="btn" @click="searchUser()">
           <i class="el-icon-search"></i>
         </div>
       </div>
@@ -42,9 +67,15 @@
             {{ item.code }}
           </span>
           <span>
-            <span class="l">编辑</span>
-            <span class="l">详情</span>
-            <span class="del">删除</span>
+            <span class="l" @click="editUserInfo(item.id, item.name, item.uid)"
+              >编辑</span
+            >
+            <span
+              class="l"
+              @click="$router.push({ path: `/UserDetails/${item.id}` })"
+              >详情</span
+            >
+            <span class="del" @click="delUser(item.id, item.name)">删除</span>
           </span>
         </div>
       </div>
@@ -60,14 +91,64 @@
 </template>
 <script>
 export default {
+  methods: {
+    editAddUser() {
+      this.thisUserInfo.id = null;
+      this.thisUserInfo.name = null;
+      this.thisUserInfo.uid = null;
+      this.thisUserInfo.tit = "添加用户";
+      this.dialogFormVisibleUserInfo = true;
+    },
+    editUserInfo(id, name, uid) {
+      this.thisUserInfo.id = id;
+      this.thisUserInfo.name = name;
+      this.thisUserInfo.uid = uid;
+      this.thisUserInfo.tit = "用户信息编辑";
+      this.dialogFormVisibleUserInfo = true;
+    },
+    updateUser() {
+      //更改用户信息
+    },
+    addUser() {
+      //添加用户信息
+    },
+    searchUser() {
+      //查询用户信息
+      console.log(this.searchText)
+    },
+    delUser(id, name) {
+      //删除用户信息
+      id;
+      this.$confirm(`是否删除${name}?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          return;
+        })
+        .catch(() => {
+          return;
+        });
+    },
+  },
   data() {
     return {
+      dialogFormVisibleUserInfo: false,
+      searchText: null,
+      thisUserInfo: {
+        tit: null,
+        id: null,
+        name: null,
+        uid: null,
+      },
       page: {
         pageSize: 10,
         pageNum: 1,
         pageMax: 8,
       },
       userlist: [
+        //用户信息列表
         {
           id: 1,
           name: "张三",
@@ -134,7 +215,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .UserInfo {
   position: relative;
   padding: 30px;
@@ -142,6 +223,21 @@ export default {
   box-sizing: border-box;
   overflow: hidden;
   background: linear-gradient(90deg, #fc466b 0%, #3f5efb 100%);
+}
+.UserInfo .el-form-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.UserInfo .el-input {
+  width: 260px;
+}
+.UserInfo .el-dialog {
+  max-width: 580px;
+}
+.UserInfo .el-form-item__label {
+  width: 70px;
+  text-align: center;
 }
 .UserInfo .style1 {
   width: 200px;
@@ -171,9 +267,12 @@ export default {
 }
 .UserInfo .page1 .tit {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 220px;
   z-index: 99;
   color: rgba(255, 255, 255, 0.8);
   font-weight: bold;
@@ -183,6 +282,7 @@ export default {
   padding-bottom: 15px;
   text-align: center;
   transition: 0.5s;
+  animation: flipInX 1s 0.2s linear 1 normal both;
 }
 .UserInfo .page1 .add {
   width: 40px;
@@ -255,8 +355,6 @@ export default {
   width: 80%;
   height: calc(100% - 30px);
   margin: 30px auto 0 auto;
-  background-color: #ffffff;
-  border-radius: 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -302,17 +400,21 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background: rgba(255,255,255,.1);
-    border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: 0.5s;
+}
+.UserInfo .page2 .page2Box .list:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 .UserInfo .page2 .list .suc {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: rgba(98,203,68,.9);
+  color: rgba(98, 203, 68, 0.9);
 }
 .UserInfo .page2 .list .suc > span {
-  background: rgba(98,203,68,.9);
+  background: rgba(98, 203, 68, 0.9);
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -325,7 +427,7 @@ export default {
   color: rgba(235, 90, 86, 1);
 }
 .UserInfo .page2 .list .err > span {
-  background: rgba(235, 90, 86, .9);
+  background: rgba(235, 90, 86, 0.9);
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -402,5 +504,33 @@ export default {
   margin: 0 20px;
   color: rgba(0, 0, 0, 0.8);
   font-size: 20px;
+}
+@keyframes flipInX {
+  0% {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+  40% {
+    -webkit-transform: perspective(400px) rotateX(-20deg);
+    transform: perspective(400px) rotateX(-20deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+  60% {
+    -webkit-transform: perspective(400px) rotateX(10deg);
+    transform: perspective(400px) rotateX(10deg);
+    opacity: 1;
+  }
+  80% {
+    -webkit-transform: perspective(400px) rotateX(-5deg);
+    transform: perspective(400px) rotateX(-5deg);
+  }
+  100% {
+    -webkit-transform: perspective(400px);
+    transform: perspective(400px);
+  }
 }
 </style>

@@ -64,7 +64,7 @@
         </div>
         <!-- <el-empty description="暂无数据" v-if="!StateAbnormality"></el-empty> -->
         <div class="page2Box">
-          <div class="box" v-for="item in StateAbnormality" :key="item.id">
+          <div class="box" v-for="item in StateAbnormality" :key="item.id" @click="$router.push({ path: `/UserDetails/${item.id}` })">
             <div class="a">
               <div class="b">
                 <a href="#">{{ item.name }}</a>
@@ -146,10 +146,10 @@ export default {
         },
         {
           id: "3",
-          name: "疑似人员信息查询",
+          name: "异常人员信息查询",
           path: "/SuspectorInformationQuery",
           i: "el-icon-search",
-          txt: "查询疑似人员信息",
+          txt: "查询异常人员信息",
         },
       ],
       optionReceptive: {
@@ -553,10 +553,12 @@ export default {
 .index .page2 .page2Box .box {
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
+  min-width: 620px;
 }
 .index .page2 .a {
+  max-width: 620px;
   cursor: pointer;
   position: relative;
   width: 90%;

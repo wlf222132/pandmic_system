@@ -12,7 +12,7 @@ const routes = [
     redirect: '/index',
     children: [
       {
-        path: 'index', //首页{每日人流，每日红黄绿码}
+        path: 'index', //首页
         component: () => import('../views/home/Index.vue'),
       },
       {
@@ -28,9 +28,14 @@ const routes = [
         component: () => import('../views/home/UserInfo.vue'),
       },
       {
-        path: 'SuspectorInformationQuery', //疑似人员信息查询
+        path: 'SuspectorInformationQuery', //异常人员信息查询
         component: () => import('../views/home/SuspectorInformationQuery.vue'),
-      }
+      },
+      {
+        path: 'UserDetails/:id', //用户详情
+        component: () => import('../views/home/UserDetails.vue'),
+      },
+      
     ],
   },
   {
@@ -44,24 +49,24 @@ const router = new VueRouter({
   routes
 })
 
-// router.beforeEach((to,from,next) => {
-//   isLogin(to,from,next);
-// })
+router.beforeEach((to,from,next) => {
+  isLogin(to,from,next);
+})
 
 //路由守卫 是否登录
-// function isLogin(to,from,next){
-//   if(to.path == '/login'){
-//     next();
-//   }else{
-//     if(typeof window.sessionStorage["token"] == 'string' && window.sessionStorage["token"].length > 0){
-//       //解析token
-//       // getUserInfo().then(res => console.log(res));
-//       next();
-//     }else{
-//       next('/login');
-//     }
-//   }
-// }
+function isLogin(to,from,next){
+  if(to.path == '/login'){
+    next();
+  }else{
+    if(typeof window.sessionStorage["token"] == 'string' && window.sessionStorage["token"].length > 0){
+      //解析token
+      // getUserInfo().then(res => console.log(res));
+      next();
+    }else{
+      next('/login');
+    }
+  }
+}
 
 
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题

@@ -8,6 +8,7 @@
         class="username"
         v-model="login_username"
         autocomplete="off"
+        @keyup.enter="login()"
       />
       <input
         type="password"
@@ -15,6 +16,7 @@
         class="password"
         v-model="login_password"
         autocomplete="off"
+        @keyup.enter="login()"
       />
       <div class="change_type">
         没有账号？<span @click="isLogin = false">立即注册</span>
@@ -99,23 +101,23 @@ export default {
         this.fullscreenLoading = true;
         userLogin(user)
           .then((res) => {
-            this.fullscreenLoading = false;
             if (res.code == 200) {
-              if (
-                res.data != null &&
-                res.data != undefined
-              ) {
+              if (res.data != null && res.data != undefined) {
                 //存用户信息
-                console.log(res.data)
-                this.$user.userName = "张三";
+                window.sessionStorage["token"] = res.data.token.token;
+                this.$user.userName = res.data.info.adminUser;
+                this.$user.email = res.data.info.email;
+                this.$user.userId = res.data.info.userId;
                 this.$router.push("/");
               } else {
+                this.fullscreenLoading = false;
                 this.$notify.error({
                   title: "错误",
                   message: "网络错误",
                 });
               }
             } else {
+              this.fullscreenLoading = false;
               this.$notify.error({
                 title: "错误",
                 message: res.message,
@@ -252,6 +254,6 @@ export default {
   font-size: 20px;
   color: rgba(255, 255, 255, 0.7);
   font-weight: bold;
-  letter-spacing:2px;
+  letter-spacing: 2px;
 }
 </style>

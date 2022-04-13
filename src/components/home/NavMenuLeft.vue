@@ -7,10 +7,7 @@
     </div>
     <div class="icon">
       <div class="iconImg">
-        <img
-          src="@/assets/img/home/index/userimg.jpg"
-          alt=""
-        />
+        <img src="@/assets/img/home/index/userimg.jpg" alt="" />
       </div>
       <div class="iconCon">
         <p>{{ this.$user.type }}</p>
@@ -22,7 +19,12 @@
       <p>信息统计</p>
     </div>
     <div class="menu">
-      <div class="item" v-for="item in statisticsList" :key="item.id" @click="routerUrl(item.path)">
+      <div
+        class="item"
+        v-for="item in statisticsList"
+        :key="item.id"
+        @click="routerUrl(item.path)"
+      >
         <div class="light"></div>
         <div class="licon">
           <i class="iconfont" :class="item.i"></i>
@@ -36,7 +38,12 @@
       <p>信息查询</p>
     </div>
     <div class="menu">
-      <div class="item" v-for="item in apiList" :key="item.id"  @click="routerUrl(item.path)">
+      <div
+        class="item"
+        v-for="item in apiList"
+        :key="item.id"
+        @click="routerUrl(item.path)"
+      >
         <div class="light"></div>
         <div class="licon">
           <i class="iconfont" :class="item.i"></i>
@@ -50,7 +57,12 @@
       <p>用户功能</p>
     </div>
     <div class="serve">
-      <div class="item" v-for="item in userFeaturesList" :key="item.id" @click="routerUrl(item.path)">
+      <div
+        class="item"
+        v-for="item in userFeaturesList"
+        :key="item.id"
+        @click="routerUrl(item.path)"
+      >
         <div class="light"></div>
         <div class="licon">
           <i class="iconfont" :class="item.i"></i>
@@ -63,20 +75,28 @@
 
 <script>
 export default {
-  methods:{
-    routerUrl(url){
-      this.$router.push(this.isLogin(url));
-    },
-    isLogin(url){
-      if(url == '/login'){
-        this.$user.token = null;
-        this.$user.userId = null;
-        this.$user.email = null;
-        this.$user.userName = null;
-        this.$user.type = null;
+  methods: {
+    routerUrl(url) {
+      if (url == "/login") {
+        this.$confirm("是否确定退出系统？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            this.$user.userId = null;
+            this.$user.email = null;
+            this.$user.userName = null;
+            window.sessionStorage.removeItem('token');
+            this.$router.push(url);
+          })
+          .catch(() => {
+            return;
+          });
+      } else {
+        this.$router.push(url);
       }
-      return url;
-    }
+    },
   },
   data() {
     return {
@@ -107,14 +127,14 @@ export default {
           id: "2",
           name: "用户信息管理",
           path: "/UserInfo",
-          i: "el-icon-user"
+          i: "el-icon-user",
         },
         {
           id: "3",
-          name: "疑似人员信息查询",
+          name: "异常人员信息查询",
           path: "/SuspectorInformationQuery",
           i: "el-icon-search",
-        }
+        },
       ],
       userFeaturesList: [
         //用户功能
@@ -230,7 +250,7 @@ export default {
   position: relative;
   transition: 0.5s;
   border-radius: 6px;
-  cursor:pointer;
+  cursor: pointer;
 }
 .item:hover {
   background: rgba(255, 255, 255, 0.1);
