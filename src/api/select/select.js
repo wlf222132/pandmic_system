@@ -8,3 +8,12 @@ export function SelectPassinfo(params){
         params
     })
 }
+//近七天的疫情统计
+const URL_API_SELECT_GETSEVEN = '/PassInfo/getSeven'
+export function SelectGetSeven(params){
+    return axios({
+        method: "post",
+        url: URL_API_SELECT_GETSEVEN,
+        params
+    })
+}

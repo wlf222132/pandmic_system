@@ -7,10 +7,10 @@
     >
       <el-form :model="thisUserInfo">
         <el-form-item label="姓名">
-          <el-input v-model="thisUserInfo.name" autocomplete="off"></el-input>
+          <el-input v-model="thisUserInfo.name" autocomplete="off" @keyup.enter.native="changeUser(thisUserInfo.tit)"></el-input>
         </el-form-item>
         <el-form-item label="身份证">
-          <el-input v-model="thisUserInfo.uid" autocomplete="off"></el-input>
+          <el-input v-model="thisUserInfo.uid" autocomplete="off" @keyup.enter.native="changeUser(thisUserInfo.tit)"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -149,7 +149,7 @@ export default {
         this.loading.page2BoxLoading = false;
         this.$notify.success({
           title: "提示",
-          message: "用户信息删除成功",
+          message: "用户信息添加成功",
         });
       }, 1000);
     },
@@ -181,7 +181,7 @@ export default {
             this.loading.page2BoxLoading = false;
             this.$notify.success({
               title: "提示",
-              message: "用户信息添加成功",
+              message: "用户信息删除成功",
             });
           }, 1000);
           return;

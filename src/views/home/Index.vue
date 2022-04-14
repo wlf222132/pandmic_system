@@ -97,10 +97,15 @@
 <script>
 import * as echarts from "echarts";
 import { SelectPassinfo } from "@/api/select/select.js";
+import { SelectGetSeven } from "@/api/select/select.js";
 export default {
   filters: {
     isNumber(value) {
-      if (!isNaN(Number(value)) && typeof value != "object" && typeof value != "undefined") {
+      if (
+        !isNaN(Number(value)) &&
+        typeof value != "object" &&
+        typeof value != "undefined"
+      ) {
         return value;
       } else {
         return "暂无";
@@ -119,6 +124,12 @@ export default {
         g: null,
         y: null,
         r: null,
+      },
+      dailyDataList: {
+        date: [],
+        g: [],
+        y: [],
+        r: [],
       },
       //page2
       StateAbnormality: [
@@ -188,9 +199,8 @@ export default {
         series: [
           {
             name: "红码人数",
-            data: [10, 22, 28, 43, 49, 21, 32],
+            data: null,
             type: "line",
-            stack: "x",
             itemStyle: {
               normal: {
                 color: "#eb5a56", // 红码数据
@@ -202,9 +212,8 @@ export default {
           },
           {
             name: "黄码人数",
-            data: [5, 4, 3, 5, 10, 43, 43],
+            data: null,
             type: "line",
-            stack: "x",
             itemStyle: {
               normal: {
                 color: "#f8bc33", // 黄码数据
@@ -215,9 +224,8 @@ export default {
           },
           {
             name: "绿码人数",
-            data: [1, 14, 32, 13, 35, 76, 1],
+            data: null,
             type: "line",
-            stack: "x",
             itemStyle: {
               normal: {
                 color: "#62cb44", // 绿码数据
@@ -231,11 +239,46 @@ export default {
     };
   },
   mounted() {
-    this.initEchartReceptive();
     this.calendar();
     this.mountedDate();
+    this.moutedDataList();
   },
   methods: {
+    moutedDataList() {
+      echarts.init(document.getElementById("receptive")).showLoading();
+      SelectGetSeven({ days: "7" })
+        .then((res) => {
+          echarts.init(document.getElementById("receptive")).hideLoading();
+          if (res.code == 200) {
+            for (let index in res.data.Seven) {
+              this.dailyDataList.date.push(res.data.Seven[index]["date"]);
+              this.dailyDataList.r.push(Number(res.data.Seven[index]["红码"]));
+              this.dailyDataList.y.push(Number(res.data.Seven[index]["黄码"]));
+              this.dailyDataList.g.push(Number(res.data.Seven[index]["绿码"]));
+            }
+            console.log(this.dailyDataList.r)
+            console.log(this.dailyDataList.y)
+            console.log(this.dailyDataList.g)
+            this.optionReceptive.xAxis.data = this.dailyDataList.date;
+            this.optionReceptive.series[0]["data"] = this.dailyDataList.r;
+            this.optionReceptive.series[1]["data"] = this.dailyDataList.y;
+            this.optionReceptive.series[2]["data"] = this.dailyDataList.g;
+            this.initEchartReceptive();
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: "网络错误",
+            });
+          }
+        })
+        .catch(() => {
+          echarts.init(document.getElementById("receptive")).showLoading();
+          this.$notify.error({
+            title: "错误",
+            message: "网络错误",
+          });
+        });
+    },
     mountedDate() {
       let y = this.todayDate.getFullYear();
       let m = this.todayDate.getMonth() + 1;
@@ -301,7 +344,16 @@ export default {
       })
         .then((res) => {
           this.loading.dailyDataLoading = false;
-          console.log(res);
+          if (res.code == 200) {
+            this.dailyData.g = res.data.count["绿码"];
+            this.dailyData.y = res.data.count["黄码"];
+            this.dailyData.r = res.data.count["红码"];
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: res.message,
+            });
+          }
         })
         .catch(() => {
           this.loading.dailyDataLoading = false;
