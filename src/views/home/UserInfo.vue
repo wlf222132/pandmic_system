@@ -15,7 +15,9 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleUserInfo = false">取 消</el-button>
-        <el-button type="primary" @click="updateUser()">确 定</el-button>
+        <el-button type="primary" @click="changeUser(thisUserInfo.tit)"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
 
@@ -48,13 +50,14 @@
       </div>
     </div>
     <div class="page2">
-      <div class="page2Box">
+      <div class="page2Box" v-loading="loading.page2BoxLoading">
         <div class="listTop">
           <span>姓名</span>
           <span>身份证</span>
           <span>状态</span>
           <span>选项</span>
         </div>
+        <el-empty v-if="userlist.length == 0" description="暂无数据"></el-empty>
         <div class="list" v-for="item in userlist" :key="item.id">
           <span>{{ item.name }}</span>
           <span>{{ item.uid }}</span>
@@ -106,18 +109,65 @@ export default {
       this.thisUserInfo.tit = "用户信息编辑";
       this.dialogFormVisibleUserInfo = true;
     },
+    changeUser(tit) {
+      if (this.thisUserInfo.name == null || this.thisUserInfo.name == "") {
+        this.$notify.error({
+          title: "错误",
+          message: "名字不能为空",
+        });
+      } else if (this.thisUserInfo.uid == null || this.thisUserInfo.uid == "") {
+        this.$notify.error({
+          title: "错误",
+          message: "身份证不能为空",
+        });
+      } else {
+        this.dialogFormVisibleUserInfo = false;
+        if (tit == "用户信息编辑") {
+          this.updateUser();
+        } else {
+          this.addUser();
+        }
+      }
+    },
     updateUser() {
       //更改用户信息
+      this.loading.page2BoxLoading = true;
+
+      setTimeout(() => {
+        this.loading.page2BoxLoading = false;
+        this.$notify.success({
+          title: "提示",
+          message: "用户信息更新成功",
+        });
+      }, 1000);
     },
     addUser() {
       //添加用户信息
+      this.loading.page2BoxLoading = true;
+
+      setTimeout(() => {
+        this.loading.page2BoxLoading = false;
+        this.$notify.success({
+          title: "提示",
+          message: "用户信息删除成功",
+        });
+      }, 1000);
     },
     searchUser() {
       //查询用户信息
-      console.log(this.searchText)
+      this.loading.page2BoxLoading = true;
+
+      setTimeout(() => {
+        this.loading.page2BoxLoading = false;
+        this.$notify.success({
+          title: "提示",
+          message: "用户信息查询成功",
+        });
+      }, 1000);
     },
     delUser(id, name) {
       //删除用户信息
+
       id;
       this.$confirm(`是否删除${name}?`, "提示", {
         confirmButtonText: "确定",
@@ -125,6 +175,15 @@ export default {
         type: "warning",
       })
         .then(() => {
+          this.loading.page2BoxLoading = true;
+
+          setTimeout(() => {
+            this.loading.page2BoxLoading = false;
+            this.$notify.success({
+              title: "提示",
+              message: "用户信息添加成功",
+            });
+          }, 1000);
           return;
         })
         .catch(() => {
@@ -135,6 +194,10 @@ export default {
   data() {
     return {
       dialogFormVisibleUserInfo: false,
+      loading: {
+        page2BoxLoading: false,
+        dialog: false,
+      },
       searchText: null,
       thisUserInfo: {
         tit: null,
@@ -372,7 +435,14 @@ export default {
   padding-bottom: 10px;
 }
 .UserInfo .page2 .page2Box > div {
+  max-height: 9.09%;
   flex: 1;
+}
+.UserInfo .page2 .page2Box .el-loading-mask {
+  max-height: 100%;
+}
+.UserInfo .page2 .page2Box .el-empty {
+  margin-top: 11%;
 }
 .UserInfo .page2 .page2Box .listTop {
   background: rgba(255, 255, 255, 0.4);

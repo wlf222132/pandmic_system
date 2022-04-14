@@ -32,23 +32,23 @@
         </div>
       </div>
       <div class="dailyDataBox">
-        <div class="dailyData">
+        <div class="dailyData" v-loading="loading.dailyDataLoading">
           <div class="li">
             <div class="tit">
               绿码
-              <span class="num">{{ dailyData.g }}</span>
+              <span class="num">{{ dailyData.g | isNumber }}</span>
             </div>
           </div>
           <div class="li">
             <div class="tit">
               黄码
-              <span class="num">{{ dailyData.y }}</span>
+              <span class="num">{{ dailyData.y | isNumber }}</span>
             </div>
           </div>
           <div class="li">
             <div class="tit">
               红码
-              <span class="num">{{ dailyData.r }}</span>
+              <span class="num">{{ dailyData.r | isNumber }}</span>
             </div>
           </div>
           <div class="date">{{ dailyData.date }}</div>
@@ -64,7 +64,12 @@
         </div>
         <!-- <el-empty description="暂无数据" v-if="!StateAbnormality"></el-empty> -->
         <div class="page2Box">
-          <div class="box" v-for="item in StateAbnormality" :key="item.id" @click="$router.push({ path: `/UserDetails/${item.id}` })">
+          <div
+            class="box"
+            v-for="item in StateAbnormality"
+            :key="item.id"
+            @click="$router.push({ path: `/UserDetails/${item.id}` })"
+          >
             <div class="a">
               <div class="b">
                 <a href="#">{{ item.name }}</a>
@@ -91,16 +96,29 @@
 </template>
 <script>
 import * as echarts from "echarts";
+import { SelectPassinfo } from "@/api/select/select.js";
 export default {
+  filters: {
+    isNumber(value) {
+      if (!isNaN(Number(value)) && typeof value != "object" && typeof value != "undefined") {
+        return value;
+      } else {
+        return "暂无";
+      }
+    },
+  },
   data() {
     return {
       todayDate: new Date(),
+      loading: {
+        dailyDataLoading: false,
+      },
       dailyData: {
         //统计个数
         date: null,
-        g: 100,
-        y: 8,
-        r: 0,
+        g: null,
+        y: null,
+        r: null,
       },
       //page2
       StateAbnormality: [
@@ -215,8 +233,21 @@ export default {
   mounted() {
     this.initEchartReceptive();
     this.calendar();
+    this.mountedDate();
   },
   methods: {
+    mountedDate() {
+      let y = this.todayDate.getFullYear();
+      let m = this.todayDate.getMonth() + 1;
+      let d = this.todayDate.getDate();
+      if (m.length == 1) {
+        m = "0" + m;
+      }
+      if (d.length == 1) {
+        d = "0" + d;
+      }
+      this.getSpecifiedDateData(y, m, d);
+    },
     //日历
     calendar() {
       let d =
@@ -256,11 +287,35 @@ export default {
       });
     },
     getSpecifiedDateData(y, m, d) {
-      this.dailyData.date = `${y}.${m}.${d}`;
+      //按日期查询每日流量中个码统计
+      this.loading.dailyDataLoading = true;
+      if (m.length == 1) {
+        m = "0" + m;
+      }
+      if (d.length == 1) {
+        d = "0" + d;
+      }
+      this.dailyData.date = `${y}-${m}-${d}`;
+      SelectPassinfo({
+        date: this.dailyData.date,
+      })
+        .then((res) => {
+          this.loading.dailyDataLoading = false;
+          console.log(res);
+        })
+        .catch(() => {
+          this.loading.dailyDataLoading = false;
+          this.$notify.error({
+            title: "错误",
+            message: "网络错误",
+          });
+        });
     },
+
     routerPath(path) {
       this.$router.push(path);
     },
+
     //初始化表格
     initEchartReceptive() {
       let chartDiv = document.getElementById("receptive");
@@ -556,6 +611,7 @@ export default {
   justify-content: space-evenly;
   align-items: center;
   min-width: 620px;
+  max-width: 50%;
 }
 .index .page2 .a {
   max-width: 620px;
