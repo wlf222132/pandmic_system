@@ -7,10 +7,18 @@
     >
       <el-form :model="thisUserInfo">
         <el-form-item label="姓名">
-          <el-input v-model="thisUserInfo.name" autocomplete="off" @keyup.enter.native="changeUser(thisUserInfo.tit)"></el-input>
+          <el-input
+            v-model="thisUserInfo.name"
+            autocomplete="off"
+            @keyup.enter.native="changeUser(thisUserInfo.tit)"
+          ></el-input>
         </el-form-item>
         <el-form-item label="身份证">
-          <el-input v-model="thisUserInfo.uid" autocomplete="off" @keyup.enter.native="changeUser(thisUserInfo.tit)"></el-input>
+          <el-input
+            v-model="thisUserInfo.uid"
+            autocomplete="off"
+            @keyup.enter.native="changeUser(thisUserInfo.tit)"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -61,13 +69,16 @@
         <div class="list" v-for="item in userlist" :key="item.id">
           <span>{{ item.name }}</span>
           <span>{{ item.uid }}</span>
-          <span v-if="item.code == '正常'" class="suc">
+          <span v-if="item.code == '绿码'" class="suc">
             <span></span>
             {{ item.code }}
           </span>
-          <span v-else class="err">
+          <span v-else-if="item.code == '红码'" class="err">
             <span></span>
             {{ item.code }}
+          </span>
+          <span v-else>
+            无数据
           </span>
           <span>
             <span class="l" @click="editUserInfo(item.id, item.name, item.uid)"
@@ -85,14 +96,20 @@
     </div>
     <div class="page3">
       <div class="page3Box">
-        <span class="btn">上一页</span>
+        <span class="btn" @click="changeNum(1)">上一页</span>
         <span class="info">第{{ page.pageNum }}页/共{{ page.pageMax }}页</span>
-        <span class="btn">下一页</span>
+        <span class="btn" @click="changeNum(0)">下一页</span>
       </div>
     </div>
   </div>
 </template>
 <script>
+import {
+  SelectUser,
+  SelectAddUser,
+  SelectDelUser,
+  UpdataUserId,
+} from "@/api/select/select.js";
 export default {
   methods: {
     editAddUser() {
@@ -129,46 +146,147 @@ export default {
         }
       }
     },
+    //  thisUserInfo: {
+    //     tit: null,
+    //     id: null,
+    //     name: null,
+    //     uid: null,
+    //   },
     updateUser() {
       //更改用户信息
       this.loading.page2BoxLoading = true;
-
-      setTimeout(() => {
+      UpdataUserId({
+        id:this.thisUserInfo.id,
+        name:this.thisUserInfo.name,
+        idCard:this.thisUserInfo.uid,
+      }).then(res=>{
         this.loading.page2BoxLoading = false;
+        console.log(res);
         this.$notify.success({
           title: "提示",
           message: "用户信息更新成功",
         });
-      }, 1000);
+      }).catch(()=>{
+        this.loading.page2BoxLoading = false;
+        this.$notify.error({
+          title: "错误",
+          message: "网络错误",
+        });
+      })
+ 
     },
     addUser() {
       //添加用户信息
       this.loading.page2BoxLoading = true;
-
-      setTimeout(() => {
-        this.loading.page2BoxLoading = false;
-        this.$notify.success({
-          title: "提示",
-          message: "用户信息添加成功",
+      SelectAddUser(JSON.stringify({
+        name: this.thisUserInfo.name,
+        idCard: this.thisUserInfo.uid,
+      }))
+        .then((res) => {
+          this.loading.page2BoxLoading = false;
+          console.log(res);
+          if (res.code == 200) {
+            this.$notify.success({
+              title: "提示",
+              message: res.message,
+            });
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: res.message,
+            });
+          }
+        })
+        .catch(() => {
+          this.loading.page2BoxLoading = false;
+          this.$notify.error({
+            title: "错误",
+            message: "网络错误",
+          });
         });
-      }, 1000);
+    },
+    changeNum(type) {
+      //上一页，下一页
+      if (type == 0) {
+        if (this.page.pageNum < this.page.pageMax) {
+          this.page.pageNum++;
+          this.SelectUserAll();
+        } else {
+          this.$notify.error({
+            title: "提示",
+            message: "已经到最后一页了",
+          });
+        }
+      } else {
+        if (this.page.pageNum == 1) {
+          this.$notify.error({
+            title: "提示",
+            message: "已经到第一页了",
+          });
+        } else {
+          this.page.pageNum--;
+          this.SelectUserAll();
+        }
+      }
+    },
+    SelectUserAll() {
+      //查询API
+      SelectUser({
+        info: this.searchText,
+        size: this.page.pageSize,
+        pageNumber: this.page.pageNum,
+      })
+        .then((res) => {
+          this.loading.page2BoxLoading = false;
+          if (res.code == 200) {
+            this.page.pageMax = res.data.userInfo.pages;
+            if (res.data.userInfo.records.length > 0) {
+              this.userlist = [];
+              res.data.userInfo.records.forEach((item) => {
+                let list = {
+                  id: item.id,
+                  name: item.name,
+                  uid: item.idCard,
+                  code: item.status,
+                };
+                this.userlist.push(list);
+              });
+              // this.$notify.success({
+              //   title: "提示",
+              //   message: res.message,
+              // });
+            } else {
+              if (this.page.pageNum > 1) {
+                this.page.pageNum--;
+              }
+              this.$notify.error({
+                title: "提示",
+                message: "无更多数据",
+              });
+            }
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: res.message,
+            });
+          }
+        })
+        .catch(() => {
+          this.loading.page2BoxLoading = false;
+          this.$notify.error({
+            title: "错误",
+            message: "网络错误",
+          });
+        });
     },
     searchUser() {
       //查询用户信息
       this.loading.page2BoxLoading = true;
-
-      setTimeout(() => {
-        this.loading.page2BoxLoading = false;
-        this.$notify.success({
-          title: "提示",
-          message: "用户信息查询成功",
-        });
-      }, 1000);
+      this.page.pageNum = 1;
+      this.SelectUserAll();
     },
     delUser(id, name) {
       //删除用户信息
-
-      id;
       this.$confirm(`是否删除${name}?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -176,14 +294,29 @@ export default {
       })
         .then(() => {
           this.loading.page2BoxLoading = true;
-
-          setTimeout(() => {
-            this.loading.page2BoxLoading = false;
-            this.$notify.success({
-              title: "提示",
-              message: "用户信息删除成功",
+          SelectDelUser({ id: id })
+            .then((res) => {
+              if (res.code == 200) {
+                this.$notify.success({
+                  title: "提示",
+                  message: name + "删除成功",
+                });
+                this.SelectUserAll();
+              } else {
+                this.loading.page2BoxLoading = false;
+                this.$notify.error({
+                  title: "错误",
+                  message: res.message,
+                });
+              }
+            })
+            .catch(() => {
+              this.loading.page2BoxLoading = false;
+              this.$notify.error({
+                title: "错误",
+                message: "网络错误",
+              });
             });
-          }, 1000);
           return;
         })
         .catch(() => {
@@ -195,10 +328,10 @@ export default {
     return {
       dialogFormVisibleUserInfo: false,
       loading: {
-        page2BoxLoading: false,
+        page2BoxLoading: true,
         dialog: false,
       },
-      searchText: null,
+      searchText: "",
       thisUserInfo: {
         tit: null,
         id: null,
@@ -208,72 +341,15 @@ export default {
       page: {
         pageSize: 10,
         pageNum: 1,
-        pageMax: 8,
+        pageMax: 1,
       },
       userlist: [
         //用户信息列表
-        {
-          id: 1,
-          name: "张三",
-          uid: "500105200104291222",
-          code: "正常",
-        },
-        {
-          id: 2,
-          name: "李四",
-          uid: "500105200004291215",
-          code: "异常",
-        },
-        {
-          id: 3,
-          name: "王五",
-          uid: "500105200004291215",
-          code: "异常",
-        },
-        {
-          id: 4,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "正常",
-        },
-        {
-          id: 5,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "正常",
-        },
-        {
-          id: 6,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "正常",
-        },
-        {
-          id: 7,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "正常",
-        },
-        {
-          id: 8,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "异常",
-        },
-        {
-          id: 9,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "正常",
-        },
-        {
-          id: 10,
-          name: "张三",
-          uid: "500105200004291215",
-          code: "正常",
-        },
       ],
     };
+  },
+  mounted() {
+    this.SelectUserAll();
   },
 };
 </script>
@@ -418,7 +494,7 @@ export default {
   width: 80%;
   height: calc(100% - 30px);
   margin: 30px auto 0 auto;
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   border-radius: 20px;

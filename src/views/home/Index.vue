@@ -7,8 +7,9 @@
           <div class="cont">近况汇总</div>
         </div>
         <div class="txt">
-          <!-- <el-empty description="暂无数据"></el-empty> -->
-          <div id="receptive"></div>
+          <div id="receptive">
+            
+          </div>
         </div>
         <div class="tit titFeatures">
           <div class="left"></div>
@@ -193,7 +194,7 @@ export default {
           top: "center",
         },
         xAxis: {
-          data: ["4.6", "4.7", "4.8", "4.9", "4.10", "4.11", "4.12"],
+          data: [],
         },
         yAxis: {},
         series: [
@@ -252,17 +253,14 @@ export default {
           if (res.code == 200) {
             for (let index in res.data.Seven) {
               this.dailyDataList.date.push(res.data.Seven[index]["date"]);
-              this.dailyDataList.r.push(Number(res.data.Seven[index]["红码"]));
-              this.dailyDataList.y.push(Number(res.data.Seven[index]["黄码"]));
-              this.dailyDataList.g.push(Number(res.data.Seven[index]["绿码"]));
+              this.dailyDataList.r.push(Number(res.data.Seven[index]["red"]));
+              this.dailyDataList.y.push(Number(res.data.Seven[index]["yellow"]));
+              this.dailyDataList.g.push(Number(res.data.Seven[index]["green"]));
             }
-            console.log(this.dailyDataList.r)
-            console.log(this.dailyDataList.y)
-            console.log(this.dailyDataList.g)
-            this.optionReceptive.xAxis.data = this.dailyDataList.date;
-            this.optionReceptive.series[0]["data"] = this.dailyDataList.r;
-            this.optionReceptive.series[1]["data"] = this.dailyDataList.y;
-            this.optionReceptive.series[2]["data"] = this.dailyDataList.g;
+            this.optionReceptive.xAxis.data = this.dailyDataList.date.reverse();
+            this.optionReceptive.series[0]["data"] = this.dailyDataList.r.reverse();
+            this.optionReceptive.series[1]["data"] = this.dailyDataList.y.reverse();
+            this.optionReceptive.series[2]["data"] = this.dailyDataList.g.reverse();
             this.initEchartReceptive();
           } else {
             this.$notify.error({
@@ -272,7 +270,8 @@ export default {
           }
         })
         .catch(() => {
-          echarts.init(document.getElementById("receptive")).showLoading();
+          echarts.init(document.getElementById("receptive")).hideLoading();
+          this.initEchartReceptive();
           this.$notify.error({
             title: "错误",
             message: "网络错误",
@@ -479,7 +478,7 @@ export default {
   align-items: flex-start;
 }
 .index .page1 .page1Left .features .list .tit .t1 {
-  font-size: 15px;
+  font-size: 13px;
   color: #606060;
   height: 25px;
   line-height: 25px;
@@ -488,7 +487,7 @@ export default {
   white-space: nowrap;
 }
 .index .page1 .page1Left .features .list .tit .t2 {
-  font-size: 22px;
+  font-size: 20px;
   color: #94979c;
   height: 30px;
   line-height: 30px;
@@ -557,7 +556,7 @@ export default {
   padding: 30px 30px 30px 0;
 }
 .dailyDataBox .el-calendar {
-  background-color: #f9f9f9;
+  background-color: #F1F1FD;
   font-weight: bold;
   border-radius: 20px;
 }

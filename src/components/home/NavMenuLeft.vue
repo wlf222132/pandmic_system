@@ -158,7 +158,8 @@ export default {
   background: rgba(0, 0, 0, 0.8);
   border-radius: 20px;
   transition: 0.5s;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   color: rgba(255, 255, 255, 0.6);
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -306,6 +307,7 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   transition: 0.5s;
+  margin-bottom: 20px;
 }
 .nav:hover .serve {
   width: 230px;

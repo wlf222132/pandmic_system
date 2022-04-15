@@ -76,7 +76,7 @@ export default {
   top: 50%;
   left: 30px;
   transform: translateY(-50%);
-  width: 192px;
+  width: 234px;
 }
 .clock p {
   width: 30px;

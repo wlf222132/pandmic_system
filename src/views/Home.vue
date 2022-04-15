@@ -62,6 +62,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   transition: 0.5s;
+  height: calc(100vh - 60px);
 }
 .homeMain {
   padding: 0;
