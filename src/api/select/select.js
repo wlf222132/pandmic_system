@@ -32,7 +32,10 @@ export function SelectAddUser(params){
     return axios({
         method: "post",
         url: URL_API_ADD_USER,
-        params
+        data:JSON.stringify(params),
+        headers:{
+            "Content-Type":"application/json"
+        }
     })
 }
 //删除用户
@@ -59,6 +62,9 @@ export function UpdataUserId(params){
     return axios({
         method: "post",
         url: URL_API_UPDATA_USERID,
-        params
+        data:JSON.stringify(params),
+        headers:{
+            "Content-Type":"application/json"
+        }
     })
 }

@@ -77,9 +77,7 @@
             <span></span>
             {{ item.code }}
           </span>
-          <span v-else>
-            无数据
-          </span>
+          <span v-else> 无数据 </span>
           <span>
             <span class="l" @click="editUserInfo(item.id, item.name, item.uid)"
               >编辑</span
@@ -156,41 +154,52 @@ export default {
       //更改用户信息
       this.loading.page2BoxLoading = true;
       UpdataUserId({
-        id:this.thisUserInfo.id,
-        name:this.thisUserInfo.name,
-        idCard:this.thisUserInfo.uid,
-      }).then(res=>{
-        this.loading.page2BoxLoading = false;
-        console.log(res);
-        this.$notify.success({
-          title: "提示",
-          message: "用户信息更新成功",
-        });
-      }).catch(()=>{
-        this.loading.page2BoxLoading = false;
-        this.$notify.error({
-          title: "错误",
-          message: "网络错误",
-        });
+        id: this.thisUserInfo.id,
+        name: this.thisUserInfo.name,
+        idCard: this.thisUserInfo.uid,
       })
- 
+        .then((res) => {
+          if (res.code == 200) {
+            console.log(res.code == 200);
+            this.$notify.success({
+              title: "提示",
+              message: this.thisUserInfo.name + "信息更新成功",
+            });
+            this.SelectUserAll();
+          } else {
+            this.loading.page2BoxLoading = false;
+            this.$notify.error({
+              title: "错误",
+              message: res.message,
+            });
+          }
+        })
+        .catch(() => {
+          this.loading.page2BoxLoading = false;
+          this.$notify.error({
+            title: "错误",
+            message: "网络错误",
+          });
+        });
     },
     addUser() {
       //添加用户信息
       this.loading.page2BoxLoading = true;
-      SelectAddUser(JSON.stringify({
+      SelectAddUser({
         name: this.thisUserInfo.name,
         idCard: this.thisUserInfo.uid,
-      }))
+      })
         .then((res) => {
-          this.loading.page2BoxLoading = false;
-          console.log(res);
           if (res.code == 200) {
             this.$notify.success({
               title: "提示",
               message: res.message,
             });
+            this.searchText = "";
+            this.page.pageNum = 1;
+            this.SelectUserAll();
           } else {
+            this.loading.page2BoxLoading = false;
             this.$notify.error({
               title: "错误",
               message: res.message,
