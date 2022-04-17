@@ -61,7 +61,10 @@
           <div class="left"></div>
           <div class="cont">状态异常人员监控</div>
         </div>
-        <el-empty description="暂无数据" v-if="StateAbnormality.length<1"></el-empty>
+        <el-empty
+          description="暂无数据"
+          v-if="StateAbnormality.length < 1"
+        ></el-empty>
         <div class="page2Box">
           <div
             class="box"
@@ -84,7 +87,8 @@
               </div>
               <!-- 设置头像 -->
               <div class="f">
-                <img :src="item.imgurl" />
+                <img v-if="item.imgurl" :src="item.imgurl" />
+                <div class="fnull">无头像</div>
               </div>
             </div>
           </div>
@@ -233,9 +237,7 @@ export default {
                   name: item.name,
                   msg: item.address,
                   code: "健康码异常",
-                  imgurl:
-                  item.img ||
-                    "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F9d%2Fc2%2Fdd%2F9dc2ddda0a69053caa0ef363c0c0bc25.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652341861&t=8b78b59102e68e94eaa1b5760a1f8dfe",
+                  imgurl: item.img,
                 });
               });
               //       {
@@ -796,6 +798,16 @@ export default {
 .index .page2 .f img {
   width: 100%;
   height: 100%;
+}
+.index .page2 .f .fnull{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 30px;
+  font-weight: bold;
 }
 .index .page2 .a:hover .f {
   transition: 1s 1.3s;
