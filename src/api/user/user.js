@@ -8,3 +8,24 @@ export function userLogin(params){
         params
     })
 }
+//邮箱获取验证码
+const URL_API_EMAIL = '/admin/sendEmail'
+export function userEmail(params){
+    return axios({
+        method: "post",
+        url: URL_API_EMAIL,
+        params
+    })
+}
+//注册
+const URL_API_SIGN = '/admin/login'
+export function userSign(params){
+    return axios({
+        method: "post",
+        url: URL_API_SIGN,
+        data:JSON.stringify(params),
+        headers:{
+            "Content-Type":"application/json"
+        }
+    })
+}

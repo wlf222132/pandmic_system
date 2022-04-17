@@ -170,7 +170,7 @@ export default {
             this.loading.page2BoxLoading = false;
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })
@@ -193,7 +193,7 @@ export default {
           if (res.code == 200) {
             this.$notify.success({
               title: "提示",
-              message: res.message,
+              message: res.message || res.msg,
             });
             this.searchText = "";
             this.page.pageNum = 1;
@@ -202,7 +202,7 @@ export default {
             this.loading.page2BoxLoading = false;
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })
@@ -260,10 +260,6 @@ export default {
                 };
                 this.userlist.push(list);
               });
-              // this.$notify.success({
-              //   title: "提示",
-              //   message: res.message,
-              // });
             } else {
               if (this.page.pageNum > 1) {
                 this.page.pageNum--;
@@ -276,7 +272,7 @@ export default {
           } else {
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })
@@ -315,7 +311,7 @@ export default {
                 this.loading.page2BoxLoading = false;
                 this.$notify.error({
                   title: "错误",
-                  message: res.message,
+                  message: res.message || res.msg,
                 });
               }
             })

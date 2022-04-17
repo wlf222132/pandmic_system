@@ -257,7 +257,7 @@ export default {
           } else {
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })
@@ -379,7 +379,7 @@ export default {
           } else {
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })

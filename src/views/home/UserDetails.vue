@@ -39,7 +39,7 @@ export default {
              this.loading.PageLoading = false;
           this.$notify.error({
             title: "错误",
-            message: res.message,
+            message: res.message || res.msg,
           });
           }
         })

@@ -1,6 +1,6 @@
 <template>
   <div class="login noselect">
-    <div class="container login_container" v-if="isLogin">
+    <div class="container login_container" v-if="isLogin1">
       <div class="systemTit">疫情防控后台管理系统</div>
       <input
         type="text"
@@ -19,7 +19,7 @@
         @keyup.enter="login()"
       />
       <div class="change_type">
-        没有账号？<span @click="isLogin = false">立即注册</span>
+        没有账号？<span @click="isLog1()">立即注册</span>
       </div>
       <input
         type="button"
@@ -29,7 +29,28 @@
         v-loading.fullscreen.lock="fullscreenLoading"
       />
     </div>
-    <div class="container sign_container" v-if="!isLogin">
+    <div class="container sign_container_1" v-if="isLogin2">
+      <div class="systemTit">疫情防控后台管理系统</div>
+      <input
+        type="email"
+        placeholder="请输入邮箱"
+        class="email"
+        v-model="sign_email"
+        autocomplete="off"
+        @keyup.enter="signCode()"
+      />
+      <div class="change_type">
+        已有账号？<span @click="isLog2()">立即登录</span>
+      </div>
+      <input
+        type="button"
+        value="获取验证码"
+        class="btn"
+        @click="signCode()"
+        v-loading.fullscreen.lock="fullscreenLoading"
+      />
+    </div>
+    <div class="container sign_container" v-if="isLogin3">
       <div class="systemTit">疫情防控后台管理系统</div>
       <input
         type="text"
@@ -37,6 +58,7 @@
         class="username"
         v-model="sign_username"
         autocomplete="off"
+        @keyup.enter="sign()"
       />
       <input
         type="password"
@@ -44,6 +66,7 @@
         class="password"
         v-model="sign_password"
         autocomplete="off"
+        @keyup.enter="sign()"
       />
       <input
         type="password"
@@ -51,9 +74,18 @@
         class="repassword"
         v-model="sign_repassword"
         autocomplete="off"
+        @keyup.enter="sign()"
+      />
+      <input
+        type="code"
+        placeholder="请输入验证码"
+        class="text"
+        v-model="sign_code"
+        autocomplete="off"
+        @keyup.enter="sign()"
       />
       <div class="change_type">
-        已有账号？<span @click="isLogin = true">立即登录</span>
+        已有账号？<span @click="isLog3()">立即登录</span>
       </div>
       <input
         type="button"
@@ -66,22 +98,37 @@
   </div>
 </template>
 <script>
-import { userLogin } from "@/api/user/user.js";
+import { userLogin, userEmail, userSign } from "@/api/user/user.js";
 export default {
   name: "Login",
   data() {
     return {
-      isLogin: true,
+      isLogin1: true,
+      isLogin2: false,
+      isLogin3: false,
       fullscreenLoading: false, //屏幕遮罩层开关
       login_username: null,
       login_password: null,
       sign_username: null,
       sign_password: null,
       sign_repassword: null,
+      sign_email: null,
+      sign_code: null,
     };
   },
   methods: {
-    getUser() {},
+    isLog1() {
+      this.isLogin1 = false;
+      this.isLogin2 = true;
+    },
+    isLog2() {
+      this.isLogin1 = true;
+      this.isLogin2 = false;
+    },
+    isLog3() {
+      this.isLogin1 = true;
+      this.isLogin3 = false;
+    },
     login() {
       if (this.login_username == null || this.login_username == "") {
         this.$notify.error({
@@ -120,7 +167,7 @@ export default {
               this.fullscreenLoading = false;
               this.$notify.error({
                 title: "错误",
-                message: res.message,
+                message: res.message || res.msg,
               });
             }
           })
@@ -131,6 +178,39 @@ export default {
               message: "网络错误",
             });
             return err;
+          });
+      }
+    },
+    signCode() {
+      
+      if (this.sign_email == null || this.sign_email == "") {
+        this.$notify.error({
+          title: "错误",
+          message: "邮箱不能为空",
+        });
+      } else {
+        this.fullscreenLoading = true;
+        userEmail({
+          email: this.sign_email,
+        })
+          .then((res) => {
+            this.fullscreenLoading = false;
+            if (res.code == 200) {
+              this.isLogin3 = true;
+              this.isLogin2 = false;
+            } else {
+              this.$notify.error({
+                title: "错误",
+                message: res.message || res.msg,
+              });
+            }
+          })
+          .catch(() => {
+            this.fullscreenLoading = false;
+            this.$notify.error({
+              title: "错误",
+              message: "网络错误",
+            });
           });
       }
     },
@@ -155,18 +235,42 @@ export default {
           title: "错误",
           message: "两次密码输入不相同",
         });
+      } else if (this.sign_code !== null || this.sign_code == "") {
+        this.$notify.error({
+          title: "错误",
+          message: "验证码不能为空",
+        });
       } else {
         //异步提交
         let user = {
-          userId: this.sign_username,
-          passWord: this.sign_password,
+          adminUser: this.sign_username,
+          adminPassWord: this.sign_password,
+          code: this.sign_code,
+          email: this.sign_email,
         };
-        console.log(user);
         this.fullscreenLoading = true;
-        //未完成
-        setTimeout(() => {
+        userSign(user).then((res) => {
           this.fullscreenLoading = false;
-        }, 1000);
+          if (res.code == 200) {
+            this.$notify.success({
+              title: "成功",
+              message: res.message || res.msg,
+            });
+            this.isLogin1 = true;
+            this.isLogin3 = false;
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: res.message || res.msg,
+            });
+          }
+        }).catch(()=>{
+          this.fullscreenLoading = false;
+          this.$notify.error({
+              title: "错误",
+              message: "网络错误",
+            });
+        });
       }
     },
   },
@@ -206,7 +310,10 @@ export default {
   flex-direction: column;
 }
 .sign_container {
-  height: 400px;
+  height: 420px;
+}
+.sign_container_1 {
+  height: 300px;
 }
 .container input {
   width: 80%;

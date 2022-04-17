@@ -100,7 +100,7 @@ export default {
           } else {
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })
@@ -160,7 +160,7 @@ export default {
               });
               // this.$notify.success({
               //   title: "提示",
-              //   message: res.message,
+              //   message: res.message || res.msg,
               // });
             } else {
               if (this.page.pageNum > 1) {
@@ -174,7 +174,7 @@ export default {
           } else {
             this.$notify.error({
               title: "错误",
-              message: res.message,
+              message: res.message || res.msg,
             });
           }
         })
