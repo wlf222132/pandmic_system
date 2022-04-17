@@ -17,6 +17,18 @@ export function SelectGetSeven(params){
         params
     })
 }
+//实时通过(index page3)
+const URL_API_SELECT_GETNOW = '/PassInfo/getNow'
+export function GetNow(params){
+    return axios({
+        method: "post",
+        url: URL_API_SELECT_GETNOW,
+        params,
+    })
+}
+
+
+
 //查询用户信息
 const URL_API_SELECT_USER = '/userInfo/getUserAll'
 export function SelectUser(params){
@@ -66,5 +78,15 @@ export function UpdataUserId(params){
         headers:{
             "Content-Type":"application/json"
         }
+    })
+}
+
+
+//统计系统人数
+const URL_API_GET_SYSTEM = '/userInfo/getCount'
+export function GetSystemCount(){
+    return axios({
+        method: "post",
+        url: URL_API_GET_SYSTEM
     })
 }

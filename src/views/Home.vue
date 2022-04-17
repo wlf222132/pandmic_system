@@ -14,9 +14,9 @@
           <NavMenuLeft />
         </el-aside>
         <el-main class="homeMain">
-          <transition name="el-fade-in-linear">
+          <!-- <transition name="el-fade-in-linear"> -->
             <router-view />
-          </transition>
+          <!-- </transition> -->
         </el-main>
       </el-container>
     </el-container>

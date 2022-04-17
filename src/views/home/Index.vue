@@ -7,9 +7,7 @@
           <div class="cont">近况汇总</div>
         </div>
         <div class="txt">
-          <div id="receptive">
-            
-          </div>
+          <div id="receptive"></div>
         </div>
         <div class="tit titFeatures">
           <div class="left"></div>
@@ -57,13 +55,13 @@
         <el-calendar v-model="todayDate"></el-calendar>
       </div>
     </div>
-    <div class="page2">
+    <div class="page2" v-loading="loading.page2Loading">
       <div class="txt">
         <div class="tit">
           <div class="left"></div>
           <div class="cont">状态异常人员监控</div>
         </div>
-        <!-- <el-empty description="暂无数据" v-if="!StateAbnormality"></el-empty> -->
+        <el-empty description="暂无数据" v-if="StateAbnormality.length<1"></el-empty>
         <div class="page2Box">
           <div
             class="box"
@@ -97,8 +95,7 @@
 </template>
 <script>
 import * as echarts from "echarts";
-import { SelectPassinfo } from "@/api/select/select.js";
-import { SelectGetSeven } from "@/api/select/select.js";
+import { SelectPassinfo, SelectGetSeven, GetNow } from "@/api/select/select.js";
 export default {
   filters: {
     isNumber(value) {
@@ -117,7 +114,8 @@ export default {
     return {
       todayDate: new Date(),
       loading: {
-        dailyDataLoading: false,
+        dailyDataLoading: true,
+        page2Loading: true,
       },
       dailyData: {
         //统计个数
@@ -133,32 +131,7 @@ export default {
         r: [],
       },
       //page2
-      StateAbnormality: [
-        {
-          id: 1,
-          name: "孙悟空",
-          msg: "2022.4.12 15:34经过摄像头1",
-          code: "健康码异常",
-          imgurl:
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F9d%2Fc2%2Fdd%2F9dc2ddda0a69053caa0ef363c0c0bc25.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652341861&t=8b78b59102e68e94eaa1b5760a1f8dfe",
-        },
-        {
-          id: 2,
-          name: "猪八戒",
-          msg: "2022.4.11 11:00经过摄像头2",
-          code: "健康码异常",
-          imgurl:
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F9d%2Fc2%2Fdd%2F9dc2ddda0a69053caa0ef363c0c0bc25.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652341861&t=8b78b59102e68e94eaa1b5760a1f8dfe",
-        },
-        {
-          id: 3,
-          name: "沙和尚",
-          msg: "2022.4.11 10:46经过摄像头1",
-          code: "健康码异常",
-          imgurl:
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F9d%2Fc2%2Fdd%2F9dc2ddda0a69053caa0ef363c0c0bc25.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652341861&t=8b78b59102e68e94eaa1b5760a1f8dfe",
-        },
-      ],
+      StateAbnormality: [],
       featuresList: [
         {
           id: "1",
@@ -243,8 +216,57 @@ export default {
     this.calendar();
     this.mountedDate();
     this.moutedDataList();
+    this.getNow();
   },
   methods: {
+    getNow() {
+      GetNow({
+        size: 3,
+      })
+        .then((res) => {
+          this.loading.page2Loading = false;
+          if (res.code == 200) {
+            if (res.data.NowInfo.records != []) {
+              res.data.NowInfo.records.forEach((item) => {
+                this.StateAbnormality.push({
+                  id: item.id,
+                  name: item.name,
+                  msg: item.address,
+                  code: "健康码异常",
+                  imgurl:
+                  item.img ||
+                    "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F9d%2Fc2%2Fdd%2F9dc2ddda0a69053caa0ef363c0c0bc25.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652341861&t=8b78b59102e68e94eaa1b5760a1f8dfe",
+                });
+              });
+              //       {
+              //   id: 1,
+              //   name: "孙悟空",
+              //   msg: "2022.4.12 15:34经过摄像头1",
+              //   code: "健康码异常",
+              //   imgurl:
+              //     "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F9d%2Fc2%2Fdd%2F9dc2ddda0a69053caa0ef363c0c0bc25.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652341861&t=8b78b59102e68e94eaa1b5760a1f8dfe",
+              // },
+            } else {
+              this.$notify.error({
+                title: "提示",
+                message: "暂无数据",
+              });
+            }
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: res.message,
+            });
+          }
+        })
+        .catch(() => {
+          this.loading.page2Loading = false;
+          this.$notify.error({
+            title: "错误",
+            message: "网络错误",
+          });
+        });
+    },
     moutedDataList() {
       echarts.init(document.getElementById("receptive")).showLoading();
       SelectGetSeven({ days: "7" })
@@ -254,13 +276,18 @@ export default {
             for (let index in res.data.Seven) {
               this.dailyDataList.date.push(res.data.Seven[index]["date"]);
               this.dailyDataList.r.push(Number(res.data.Seven[index]["red"]));
-              this.dailyDataList.y.push(Number(res.data.Seven[index]["yellow"]));
+              this.dailyDataList.y.push(
+                Number(res.data.Seven[index]["yellow"])
+              );
               this.dailyDataList.g.push(Number(res.data.Seven[index]["green"]));
             }
             this.optionReceptive.xAxis.data = this.dailyDataList.date.reverse();
-            this.optionReceptive.series[0]["data"] = this.dailyDataList.r.reverse();
-            this.optionReceptive.series[1]["data"] = this.dailyDataList.y.reverse();
-            this.optionReceptive.series[2]["data"] = this.dailyDataList.g.reverse();
+            this.optionReceptive.series[0]["data"] =
+              this.dailyDataList.r.reverse();
+            this.optionReceptive.series[1]["data"] =
+              this.dailyDataList.y.reverse();
+            this.optionReceptive.series[2]["data"] =
+              this.dailyDataList.g.reverse();
             this.initEchartReceptive();
           } else {
             this.$notify.error({
@@ -556,7 +583,7 @@ export default {
   padding: 30px 30px 30px 0;
 }
 .dailyDataBox .el-calendar {
-  background-color: #F1F1FD;
+  background-color: #f1f1fd;
   font-weight: bold;
   border-radius: 20px;
 }

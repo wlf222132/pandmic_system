@@ -8,10 +8,10 @@
     </div>
     <div class="page2">
       <el-descriptions title="用户信息">
-    <el-descriptions-item label="用户名">{{userInfo.name}}</el-descriptions-item>
-    <el-descriptions-item label="身份证">{{userInfo.idCard}}</el-descriptions-item>
-    <!-- <el-descriptions-item label="手机号">{{userInfo.phone}}</el-descriptions-item>
-    <el-descriptions-item label="性别">{{userInfo.sex}}</el-descriptions-item> -->
+    <el-descriptions-item v-if="userInfo.name" label="用户名">{{userInfo.name}}</el-descriptions-item>
+    <el-descriptions-item v-else label="用户名">无数据</el-descriptions-item>
+    <el-descriptions-item v-if="userInfo.idCard" label="身份证">{{userInfo.idCard}}</el-descriptions-item>
+    <el-descriptions-item v-else label="身份证">无数据</el-descriptions-item>
     <el-descriptions-item label="状态">
       <el-tag size="small" v-if="userInfo.status =='红码'||userInfo.status =='黄码'||userInfo.status =='绿码'">{{userInfo.status}}</el-tag>
       <el-tag size="small" v-else>无数据</el-tag>
