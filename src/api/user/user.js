@@ -18,7 +18,7 @@ export function userEmail(params){
     })
 }
 //注册
-const URL_API_SIGN = '/admin/login'
+const URL_API_SIGN = '/admin/register'
 export function userSign(params){
     return axios({
         method: "post",

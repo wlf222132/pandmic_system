@@ -188,6 +188,11 @@ export default {
           title: "错误",
           message: "邮箱不能为空",
         });
+      } else if(!/^[a-z0-9]+([._-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(this.sign_email)){
+        this.$notify.error({
+          title: "错误",
+          message: "邮箱格式不正确",
+        });
       } else {
         this.fullscreenLoading = true;
         userEmail({
@@ -235,7 +240,7 @@ export default {
           title: "错误",
           message: "两次密码输入不相同",
         });
-      } else if (this.sign_code !== null || this.sign_code == "") {
+      } else if (this.sign_code == null || this.sign_code == "") {
         this.$notify.error({
           title: "错误",
           message: "验证码不能为空",

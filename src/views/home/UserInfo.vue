@@ -77,6 +77,10 @@
             <span></span>
             {{ item.code }}
           </span>
+          <span v-else-if="item.code == '黄码'" class="yel">
+            <span></span>
+            {{ item.code }}
+          </span>
           <span v-else> 无数据 </span>
           <span>
             <span class="l" @click="editUserInfo(item.id, item.name, item.uid)"
@@ -249,8 +253,8 @@ export default {
           this.loading.page2BoxLoading = false;
           if (res.code == 200) {
             this.page.pageMax = res.data.userInfo.pages;
+            this.userlist = [];
             if (res.data.userInfo.records.length > 0) {
-              this.userlist = [];
               res.data.userInfo.records.forEach((item) => {
                 let list = {
                   id: item.id,
@@ -579,6 +583,19 @@ export default {
 }
 .UserInfo .page2 .list .err > span {
   background: rgba(235, 90, 86, 0.9);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+.UserInfo .page2 .list .yel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(248, 188, 51, 1);
+}
+.UserInfo .page2 .list .yel > span {
+  background: rgba(248, 188, 51, 0.9);
   width: 10px;
   height: 10px;
   border-radius: 50%;

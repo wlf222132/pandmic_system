@@ -56,6 +56,10 @@
             <span></span>
             {{ item.code }}
           </span>
+          <span v-else-if="item.code == '黄码'" class="yel">
+            <span></span>
+            {{ item.code }}
+          </span>
           <span v-else> 无数据 </span>
           <span>
             <span
@@ -77,7 +81,7 @@
   </div>
 </template>
 <script>
-import { GetSystemCount, SelectUser } from "@/api/select/select.js";
+import { GetSystemCount, SelectErrUser } from "@/api/select/select.js";
 export default {
   mounted() {
     this.getPage2Info();
@@ -138,7 +142,7 @@ export default {
     },
     SelectUserAll() {
       //查询API
-      SelectUser({
+      SelectErrUser({
         info: this.searchText,
         size: this.page.pageSize,
         pageNumber: this.page.pageNum,
@@ -147,8 +151,8 @@ export default {
           this.loading.page3BoxLoading = false;
           if (res.code == 200) {
             this.page.pageMax = res.data.userInfo.pages;
+            this.userlist = [];
             if (res.data.userInfo.records.length > 0) {
-              this.userlist = [];
               res.data.userInfo.records.forEach((item) => {
                 let list = {
                   id: item.id,
@@ -515,6 +519,19 @@ export default {
 }
 .SuspectorInformationQuery .page3 .list .err > span {
   background: rgba(235, 90, 86, 0.9);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+.SuspectorInformationQuery .page3 .list .yel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(248, 188, 51, 1);
+}
+.SuspectorInformationQuery .page3 .list .yel > span {
+  background: rgba(248, 188, 51, 0.9);
   width: 10px;
   height: 10px;
   border-radius: 50%;

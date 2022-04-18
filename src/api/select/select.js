@@ -38,6 +38,15 @@ export function SelectUser(params){
         params
     })
 }
+//查询异常用户信息
+const URL_API_SELECT_ERRUSER = '/userInfo/getRedUser'
+export function SelectErrUser(params){
+    return axios({
+        method: "post",
+        url: URL_API_SELECT_ERRUSER,
+        params
+    })
+}
 //添加用户
 const URL_API_ADD_USER = '/userInfo/addUser'
 export function SelectAddUser(params){
@@ -88,5 +97,14 @@ export function GetSystemCount(){
     return axios({
         method: "post",
         url: URL_API_GET_SYSTEM
+    })
+}
+//查询近7天行程码信息
+const URL_API_GET_TRIP = '/tripInfo/getTrip'
+export function GetTripInfo(params){
+    return axios({
+        method: "post",
+        url: URL_API_GET_TRIP,
+        params
     })
 }
