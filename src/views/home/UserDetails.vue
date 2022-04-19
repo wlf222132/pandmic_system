@@ -18,6 +18,14 @@
         <el-descriptions-item v-else label="身份证"
           >无数据</el-descriptions-item
         >
+        <el-descriptions-item v-if="userInfo.name" label="性别">{{
+          userInfo.sex
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="性别">无数据</el-descriptions-item>
+        <el-descriptions-item v-if="userInfo.name" label="电话">{{
+          userInfo.phone
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="电话">无数据</el-descriptions-item>
         <el-descriptions-item label="状态">
           <el-tag
             size="small"

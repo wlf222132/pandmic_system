@@ -74,9 +74,9 @@
           >
             <div class="a">
               <div class="b">
-                <a href="#">{{ item.name }}</a>
-                <h2>{{ item.code }}</h2>
-                <span>{{ item.msg }}</span>
+                <a href="#">{{ item.name || '无数据' }}</a>
+                <h2>{{ item.code || '无数据' }}</h2>
+                <span>{{ item.msg  || '无数据'}}</span>
               </div>
               <div class="c">
                 <div class="d" style="--i: 1; --w: 1.5"></div>

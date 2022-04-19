@@ -41,13 +41,17 @@
         <div class="listTop">
           <span>姓名</span>
           <span>身份证</span>
+           <span>性别</span>
+          <span>电话</span>
           <span>状态</span>
           <span>选项</span>
         </div>
         <el-empty v-if="userlist.length == 0" description="暂无数据"></el-empty>
         <div class="list" v-for="item in userlist" :key="item.id">
-          <span>{{ item.name }}</span>
-          <span>{{ item.uid }}</span>
+          <span>{{ item.name  || '无数据'}}</span>
+          <span>{{ item.uid || '无数据' }}</span>
+          <span>{{item.sex || '无数据'}}</span>
+          <span>{{item.phone || '无数据'}}</span>
           <span v-if="item.code == '绿码'" class="suc">
             <span></span>
             {{ item.code }}
@@ -159,6 +163,8 @@ export default {
                   name: item.name,
                   uid: item.idCard,
                   code: item.status,
+                  sex:item.sex,
+                  phone:item.phone
                 };
                 this.userlist.push(list);
               });
@@ -539,18 +545,18 @@ export default {
 }
 .SuspectorInformationQuery .page3 .page3Box .listTop > span:nth-child(2),
 .SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(2) {
-  flex: 3;
+  flex: 2;
 }
 .SuspectorInformationQuery .page3 .page3Box .listTop > span:nth-child(4),
 .SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(4) {
   flex: 2;
 }
-.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(4) {
+.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(6) {
   display: flex;
   justify-content: center;
   align-content: center;
 }
-.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(4) > span {
+.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(6) > span {
   width: 70px;
   height: 35px;
   text-align: center;
@@ -571,10 +577,10 @@ export default {
   font-weight: bold;
   background: rgba(255, 255, 255, 0.8);
 }
-.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(4) > .l {
+.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(6) > .l {
   margin-right: 15px;
 }
-.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(4) > .del {
+.SuspectorInformationQuery .page3 .page3Box .list > span:nth-child(6) > .del {
   background: rgba(235, 90, 86, 0.8);
   color: rgba(255, 255, 255, 0.8);
 }

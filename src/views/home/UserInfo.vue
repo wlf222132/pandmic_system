@@ -20,6 +20,17 @@
             @keyup.enter.native="changeUser(thisUserInfo.tit)"
           ></el-input>
         </el-form-item>
+        <el-form-item label="性别" class="sexdia">
+          <el-radio v-model="thisUserInfo.sex" label="男">男</el-radio>
+          <el-radio v-model="thisUserInfo.sex" label="女">女</el-radio>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input
+            v-model="thisUserInfo.phone"
+            autocomplete="off"
+            @keyup.enter.native="changeUser(thisUserInfo.tit)"
+          ></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleUserInfo = false">取 消</el-button>
@@ -62,13 +73,17 @@
         <div class="listTop">
           <span>姓名</span>
           <span>身份证</span>
+          <span>性别</span>
+          <span>电话</span>
           <span>状态</span>
           <span>选项</span>
         </div>
         <el-empty v-if="userlist.length == 0" description="暂无数据"></el-empty>
         <div class="list" v-for="item in userlist" :key="item.id">
-          <span>{{ item.name }}</span>
-          <span>{{ item.uid }}</span>
+          <span>{{ item.name || "无数据" }}</span>
+          <span>{{ item.uid || "无数据" }}</span>
+          <span>{{ item.sex || "无数据" }}</span>
+          <span>{{ item.phone || "无数据" }}</span>
           <span v-if="item.code == '绿码'" class="suc">
             <span></span>
             {{ item.code }}
@@ -83,7 +98,11 @@
           </span>
           <span v-else> 无数据 </span>
           <span>
-            <span class="l" @click="editUserInfo(item.id, item.name, item.uid)"
+            <span
+              class="l"
+              @click="
+                editUserInfo(item.id, item.name, item.uid, item.sex, item.phone)
+              "
               >编辑</span
             >
             <span
@@ -118,13 +137,17 @@ export default {
       this.thisUserInfo.id = null;
       this.thisUserInfo.name = null;
       this.thisUserInfo.uid = null;
+      this.thisUserInfo.sex = null;
+      this.thisUserInfo.phone = null;
       this.thisUserInfo.tit = "添加用户";
       this.dialogFormVisibleUserInfo = true;
     },
-    editUserInfo(id, name, uid) {
+    editUserInfo(id, name, uid, sex, phone) {
       this.thisUserInfo.id = id;
       this.thisUserInfo.name = name;
       this.thisUserInfo.uid = uid;
+      this.thisUserInfo.sex = sex;
+      this.thisUserInfo.phone = phone;
       this.thisUserInfo.tit = "用户信息编辑";
       this.dialogFormVisibleUserInfo = true;
     },
@@ -138,6 +161,29 @@ export default {
         this.$notify.error({
           title: "错误",
           message: "身份证不能为空",
+        });
+      } else if (this.thisUserInfo.uid.length != 18) {
+        this.$notify.error({
+          title: "错误",
+          message: "身份证位数错误",
+        });
+      } else if (this.thisUserInfo.sex == null || this.thisUserInfo.sex == "") {
+        this.$notify.error({
+          title: "错误",
+          message: "性别不能为空",
+        });
+      } else if (
+        this.thisUserInfo.phone == null ||
+        this.thisUserInfo.phone == ""
+      ) {
+        this.$notify.error({
+          title: "错误",
+          message: "电话不能为空",
+        });
+      } else if (!/^1[3456789]\d{9}$/.test(this.thisUserInfo.phone)) {
+        this.$notify.error({
+          title: "错误",
+          message: "电话格式错误",
         });
       } else {
         this.dialogFormVisibleUserInfo = false;
@@ -161,6 +207,8 @@ export default {
         id: this.thisUserInfo.id,
         name: this.thisUserInfo.name,
         idCard: this.thisUserInfo.uid,
+        sex: this.thisUserInfo.sex,
+        phone: this.thisUserInfo.phone,
       })
         .then((res) => {
           if (res.code == 200) {
@@ -192,6 +240,8 @@ export default {
       SelectAddUser({
         name: this.thisUserInfo.name,
         idCard: this.thisUserInfo.uid,
+        sex: this.thisUserInfo.sex,
+        phone: this.thisUserInfo.phone,
       })
         .then((res) => {
           if (res.code == 200) {
@@ -261,6 +311,8 @@ export default {
                   name: item.name,
                   uid: item.idCard,
                   code: item.status,
+                  sex: item.sex,
+                  phone: item.phone,
                 };
                 this.userlist.push(list);
               });
@@ -346,6 +398,8 @@ export default {
         id: null,
         name: null,
         uid: null,
+        sex: null,
+        phone: null,
       },
       page: {
         pageSize: 10,
@@ -603,18 +657,18 @@ export default {
 }
 .UserInfo .page2 .page2Box .listTop > span:nth-child(2),
 .UserInfo .page2 .page2Box .list > span:nth-child(2) {
-  flex: 3;
-}
-.UserInfo .page2 .page2Box .listTop > span:nth-child(4),
-.UserInfo .page2 .page2Box .list > span:nth-child(4) {
   flex: 2;
 }
-.UserInfo .page2 .page2Box .list > span:nth-child(4) {
+.UserInfo .page2 .page2Box .listTop > span:nth-child(6),
+.UserInfo .page2 .page2Box .list > span:nth-child(6) {
+  flex: 2;
+}
+.UserInfo .page2 .page2Box .list > span:nth-child(6) {
   display: flex;
   justify-content: center;
   align-content: center;
 }
-.UserInfo .page2 .page2Box .list > span:nth-child(4) > span {
+.UserInfo .page2 .page2Box .list > span:nth-child(6) > span {
   width: 70px;
   height: 35px;
   text-align: center;
@@ -626,18 +680,18 @@ export default {
   font-weight: 400;
   transition: 0.4s;
 }
-.UserInfo .page2 .page2Box .list > span:nth-child(4) > span:hover {
+.UserInfo .page2 .page2Box .list > span:nth-child(6) > span:hover {
   font-weight: bold;
   background: rgba(255, 255, 255, 0.8);
 }
-.UserInfo .page2 .page2Box .list > span:nth-child(4) > .l {
+.UserInfo .page2 .page2Box .list > span:nth-child(6) > .l {
   margin-right: 15px;
 }
-.UserInfo .page2 .page2Box .list > span:nth-child(4) > .del {
+.UserInfo .page2 .page2Box .list > span:nth-child(6) > .del {
   background: rgba(235, 90, 86, 0.8);
   color: rgba(255, 255, 255, 0.8);
 }
-.UserInfo .page2 .page2Box .list > span:nth-child(4) > .del:hover {
+.UserInfo .page2 .page2Box .list > span:nth-child(6) > .del:hover {
   background: rgba(235, 90, 86, 1);
   color: rgba(255, 255, 255, 1);
 }
@@ -672,6 +726,9 @@ export default {
   margin: 0 20px;
   color: rgba(0, 0, 0, 0.8);
   font-size: 20px;
+}
+.UserInfo .sexdia{
+  transform: translateX(-75px);
 }
 @keyframes flipInX {
   0% {
