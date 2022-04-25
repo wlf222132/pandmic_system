@@ -2,7 +2,7 @@ import axios from "axios";
 
 //创建axios实例
 const service = axios.create({
-    baseURL: 'http://facetocode.xyz:9090',
+    baseURL: 'https://facetocode.xyz:9090',
     timeout: 15000
 })
 
