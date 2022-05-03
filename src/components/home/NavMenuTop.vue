@@ -17,7 +17,7 @@
           <div></div>
           <div></div>
         </div>
-        疫情防控后台管理系统
+        基于Retinaface人脸检测算法的精准疫情防控系统
       </div>
     </div>
   </div>

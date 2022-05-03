@@ -6,7 +6,7 @@
         <div class="tit">返回</div>
       </div>
     </div>
-    <div class="page2">
+    <div class="page2_r" v-if="userInfo.status == '红码'">
       <el-descriptions title="用户信息">
         <el-descriptions-item v-if="userInfo.name" label="姓名">{{
           userInfo.name
@@ -40,9 +40,78 @@
         </el-descriptions-item>
       </el-descriptions>
     </div>
-    <el-empty description="暂无数据" v-if="GetTripList.length < 1"></el-empty>
+    <div class="page2_y" v-if="userInfo.status == '黄码'">
+      <el-descriptions title="用户信息">
+        <el-descriptions-item v-if="userInfo.name" label="姓名">{{
+          userInfo.name
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="姓名">无数据</el-descriptions-item>
+        <el-descriptions-item v-if="userInfo.idCard" label="身份证">{{
+          userInfo.idCard
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="身份证"
+          >无数据</el-descriptions-item
+        >
+        <el-descriptions-item v-if="userInfo.name" label="性别">{{
+          userInfo.sex
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="性别">无数据</el-descriptions-item>
+        <el-descriptions-item v-if="userInfo.name" label="电话">{{
+          userInfo.phone
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="电话">无数据</el-descriptions-item>
+        <el-descriptions-item label="状态">
+          <el-tag
+            size="small"
+            v-if="
+              userInfo.status == '红码' ||
+              userInfo.status == '黄码' ||
+              userInfo.status == '绿码'
+            "
+            >{{ userInfo.status }}</el-tag
+          >
+          <el-tag size="small" v-else>无数据</el-tag>
+        </el-descriptions-item>
+      </el-descriptions>
+    </div>
+
+    <div class="page2_g" v-if="userInfo.status == '绿码'">
+      <el-descriptions title="用户信息">
+        <el-descriptions-item v-if="userInfo.name" label="姓名">{{
+          userInfo.name
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="姓名">无数据</el-descriptions-item>
+        <el-descriptions-item v-if="userInfo.idCard" label="身份证">{{
+          userInfo.idCard
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="身份证"
+          >无数据</el-descriptions-item
+        >
+        <el-descriptions-item v-if="userInfo.name" label="性别">{{
+          userInfo.sex
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="性别">无数据</el-descriptions-item>
+        <el-descriptions-item v-if="userInfo.name" label="电话">{{
+          userInfo.phone
+        }}</el-descriptions-item>
+        <el-descriptions-item v-else label="电话">无数据</el-descriptions-item>
+        <el-descriptions-item label="状态">
+          <el-tag
+            size="small"
+            v-if="
+              userInfo.status == '红码' ||
+              userInfo.status == '黄码' ||
+              userInfo.status == '绿码'
+            "
+            >{{ userInfo.status }}</el-tag
+          >
+          <el-tag size="small" v-else>无数据</el-tag>
+        </el-descriptions-item>
+      </el-descriptions>
+    </div>
     <div class="page3">
       <div class="tit">7天行程</div>
+      <el-empty description="暂无数据" v-if="GetTripList.length < 1"></el-empty>
       <el-timeline>
         <el-timeline-item
           :timestamp="item.date"
@@ -95,7 +164,7 @@ export default {
       })
         .then((res) => {
           if (res.code == 200) {
-            this.GetTripList = res.data.trip.records;
+            this.GetTripList = res.data.trip;
             this.GetTripList.forEach((item) => {
               item.map.reverse();
             });
@@ -171,14 +240,39 @@ export default {
   align-items: center;
   margin-bottom: 30px;
 }
-.UserDetails .page2 {
+.UserDetails .page2_r {
   padding: 20px;
   border-radius: 15px;
-  background: #f9f9f9;
+  background: #eb5a56;
   box-shadow: 4px 4px 20px rgb(0 0 0 / 10%);
 }
-.UserDetails .page2 .el-descriptions__body {
-  background-color: #f9f9f9;
+.UserDetails .page2_r .el-descriptions__body {
+  background-color: #eb5a56;
+  color: #fff !important;
+  font-size: 18px !important;
+}
+.UserDetails .page2_g {
+  padding: 20px;
+  border-radius: 15px;
+  background: #62cb44;
+  box-shadow: 4px 4px 20px rgb(0 0 0 / 10%);
+  
+}
+.UserDetails .page2_g .el-descriptions__body {
+  background-color: #62cb44;
+  color: #fff !important;
+  font-size: 18px !important;
+}
+.UserDetails .page2_y {
+  padding: 20px;
+  border-radius: 15px;
+  background: #f8bc33;
+  box-shadow: 4px 4px 20px rgb(0 0 0 / 10%);
+}
+.UserDetails .page2_y .el-descriptions__body {
+  background-color: #f8bc33;
+  color: #fff !important;
+  font-size: 18px !important;
 }
 .UserDetails .page1 .i {
   width: 95px;

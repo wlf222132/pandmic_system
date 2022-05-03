@@ -41,17 +41,17 @@
         <div class="listTop">
           <span>姓名</span>
           <span>身份证</span>
-           <span>性别</span>
+          <span>性别</span>
           <span>电话</span>
           <span>状态</span>
           <span>选项</span>
         </div>
         <el-empty v-if="userlist.length == 0" description="暂无数据"></el-empty>
         <div class="list" v-for="item in userlist" :key="item.id">
-          <span>{{ item.name  || '无数据'}}</span>
-          <span>{{ item.uid || '无数据' }}</span>
-          <span>{{item.sex || '无数据'}}</span>
-          <span>{{item.phone || '无数据'}}</span>
+          <span>{{ item.name || "无数据" }}</span>
+          <span>{{ item.uid || "无数据" }}</span>
+          <span>{{ item.sex || "无数据" }}</span>
+          <span>{{ item.phone || "无数据" }}</span>
           <span v-if="item.code == '绿码'" class="suc">
             <span></span>
             {{ item.code }}
@@ -163,8 +163,8 @@ export default {
                   name: item.name,
                   uid: item.idCard,
                   code: item.status,
-                  sex:item.sex,
-                  phone:item.phone
+                  sex: item.sex,
+                  phone: item.phone,
                 };
                 this.userlist.push(list);
               });
@@ -434,7 +434,7 @@ export default {
 
 .SuspectorInformationQuery .page3 {
   width: 100%;
-  flex: 1;
+  height: calc(100vh - 620px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -462,7 +462,7 @@ export default {
   padding-bottom: 10px;
 }
 .SuspectorInformationQuery .page3 .page3Box > div {
-  max-height: 75px;
+  max-height: 11.11%;
   flex: 1;
 }
 .SuspectorInformationQuery .page3 .page3Box .el-loading-mask {

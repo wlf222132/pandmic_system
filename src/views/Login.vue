@@ -1,7 +1,7 @@
 <template>
   <div class="login noselect">
     <div class="container login_container" v-if="isLogin1">
-      <div class="systemTit">疫情防控后台管理系统</div>
+      <div class="systemTit">疫情防控后台系统</div>
       <input
         type="text"
         placeholder="请输入账号"
@@ -30,7 +30,7 @@
       />
     </div>
     <div class="container sign_container_1" v-if="isLogin2">
-      <div class="systemTit">疫情防控后台管理系统</div>
+      <div class="systemTit">疫情防控后台系统</div>
       <input
         type="email"
         placeholder="请输入邮箱"

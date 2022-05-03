@@ -74,9 +74,9 @@
           >
             <div class="a">
               <div class="b">
-                <a href="#">{{ item.name || '无数据' }}</a>
-                <h2>{{ item.code || '无数据' }}</h2>
-                <span>{{ item.msg  || '无数据'}}</span>
+                <a href="#">{{ item.name || "无数据" }}</a>
+                <h2>{{ item.code || "无数据" }}</h2>
+                <span>{{ item.msg || "无数据" }}</span>
               </div>
               <div class="c">
                 <div class="d" style="--i: 1; --w: 1.5"></div>
@@ -360,10 +360,10 @@ export default {
     getSpecifiedDateData(y, m, d) {
       //按日期查询每日流量中个码统计
       this.loading.dailyDataLoading = true;
-      if (m.length == 1) {
+      if (m.length == 1 || m < 10) {
         m = "0" + m;
       }
-      if (d.length == 1) {
+      if (d.length == 1 || d < 10) {
         d = "0" + d;
       }
       this.dailyData.date = `${y}-${m}-${d}`;
@@ -799,7 +799,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-.index .page2 .f .fnull{
+.index .page2 .f .fnull {
   width: 100%;
   height: 100%;
   display: flex;
